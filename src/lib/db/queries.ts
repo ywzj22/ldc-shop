@@ -12,6 +12,7 @@ async function ensureProductsColumns() {
 async function ensureOrdersColumns() {
     await db.execute(sql`
         ALTER TABLE orders ADD COLUMN IF NOT EXISTS points_used INTEGER DEFAULT 0 NOT NULL;
+        ALTER TABLE orders ADD COLUMN IF NOT EXISTS current_payment_id TEXT;
     `)
 }
 
@@ -28,7 +29,7 @@ async function withProductColumnFallback<T>(fn: () => Promise<T>): Promise<T> {
     }
 }
 
-async function withOrderColumnFallback<T>(fn: () => Promise<T>): Promise<T> {
+export async function withOrderColumnFallback<T>(fn: () => Promise<T>): Promise<T> {
     try {
         return await fn()
     } catch (error: any) {

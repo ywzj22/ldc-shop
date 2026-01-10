@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import { orders } from "@/lib/db/schema"
 import { and, desc, eq, or, sql } from "drizzle-orm"
 import { AdminOrdersContent } from "@/components/admin/orders-content"
-import { cancelExpiredOrders } from "@/lib/db/queries"
+import { cancelExpiredOrders, withOrderColumnFallback } from "@/lib/db/queries"
 
 export const dynamic = 'force-dynamic';
 
@@ -56,15 +56,17 @@ export default async function AdminOrdersPage(props: {
     const countQuery = db.select({ count: sql<number>`count(*)::int` }).from(orders)
     const countResPromise = whereExpr ? countQuery.where(whereExpr as any) : countQuery
 
-    const [rows, countRes] = await Promise.all([
-        db.query.orders.findMany({
-            where: whereExpr,
-            orderBy: [desc(orders.createdAt)],
-            limit: pageSize,
-            offset,
-        }),
-        countResPromise,
-    ])
+    const [rows, countRes] = await withOrderColumnFallback(async () => {
+        return await Promise.all([
+            db.query.orders.findMany({
+                where: whereExpr,
+                orderBy: [desc(orders.createdAt)],
+                limit: pageSize,
+                offset,
+            }),
+            countResPromise,
+        ])
+    })
 
     const total = countRes[0]?.count || 0
 

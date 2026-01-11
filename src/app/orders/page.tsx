@@ -25,7 +25,7 @@ export default async function OrdersPage() {
 
     return (
         <OrdersContent
-            orders={userOrders.map(o => ({
+            orders={userOrders.map((o: any) => ({
                 orderId: o.orderId,
                 productName: o.productName,
                 amount: o.amount,

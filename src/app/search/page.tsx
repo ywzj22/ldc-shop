@@ -37,7 +37,7 @@ export default async function SearchPage({
       page={result.page}
       pageSize={result.pageSize}
       total={result.total}
-      products={result.items.map(p => ({
+      products={result.items.map((p: any) => ({
         id: p.id,
         name: p.name,
         description: p.description,
@@ -49,7 +49,7 @@ export default async function SearchPage({
         stockCount: p.stock,
         soldCount: p.sold || 0
       }))}
-      categories={categories.map(c => ({ name: c.name, icon: c.icon, sortOrder: c.sortOrder }))}
+      categories={categories.map((c: any) => ({ name: c.name, icon: c.icon, sortOrder: c.sortOrder }))}
     />
   )
 }

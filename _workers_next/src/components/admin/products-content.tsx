@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Eye, EyeOff, ArrowUp, ArrowDown, TrendingUp, ShoppingCart, CreditCard, Package, Users } from "lucide-react"
-import { deleteProduct, toggleProductStatus, reorderProduct, saveShopName, saveLowStockThreshold, saveCheckinReward, saveCheckinEnabled } from "@/actions/admin"
+import { deleteProduct, toggleProductStatus, reorderProduct, saveShopName, saveLowStockThreshold, saveCheckinReward, saveCheckinEnabled, saveNoIndex } from "@/actions/admin"
 import { toast } from "sonner"
 
 interface Product {
@@ -40,9 +40,10 @@ interface AdminProductsContentProps {
     lowStockThreshold: number
     checkinReward: number
     checkinEnabled: boolean
+    noIndexEnabled: boolean
 }
 
-export function AdminProductsContent({ products, stats, shopName, visitorCount, lowStockThreshold, checkinReward, checkinEnabled }: AdminProductsContentProps) {
+export function AdminProductsContent({ products, stats, shopName, visitorCount, lowStockThreshold, checkinReward, checkinEnabled, noIndexEnabled }: AdminProductsContentProps) {
     const { t } = useI18n()
 
     // State
@@ -55,6 +56,8 @@ export function AdminProductsContent({ products, stats, shopName, visitorCount, 
     const [savingReward, setSavingReward] = useState(false)
     const [enabledCheckin, setEnabledCheckin] = useState(checkinEnabled)
     const [savingEnabled, setSavingEnabled] = useState(false)
+    const [enabledNoIndex, setEnabledNoIndex] = useState(noIndexEnabled)
+    const [savingNoIndex, setSavingNoIndex] = useState(false)
 
     // Derived state directly to avoid Hook complexity/errors
     const threshold = Number.parseInt(thresholdValue, 10) || 5
@@ -154,6 +157,19 @@ export function AdminProductsContent({ products, stats, shopName, visitorCount, 
         }
     }
 
+    const handleToggleNoIndex = async (checked: boolean) => {
+        setSavingNoIndex(true)
+        try {
+            await saveNoIndex(checked)
+            setEnabledNoIndex(checked)
+            toast.success(t('common.success'))
+        } catch (e: any) {
+            toast.error(e.message)
+        } finally {
+            setSavingNoIndex(false)
+        }
+    }
+
     return (
         <div className="space-y-6">
             {/* Shop Settings */}
@@ -218,6 +234,20 @@ export function AdminProductsContent({ products, stats, shopName, visitorCount, 
                                     </Button>
                                 </div>
                             )}
+                        </div>
+
+                        <div className="flex items-center gap-2 border-l pl-3 ml-2">
+                            <Label htmlFor="noindex-enable" className="cursor-pointer whitespace-nowrap">{t('admin.settings.noIndex.title')}</Label>
+                            <Button
+                                id="noindex-enable"
+                                variant={enabledNoIndex ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => handleToggleNoIndex(!enabledNoIndex)}
+                                disabled={savingNoIndex}
+                                className={enabledNoIndex ? "bg-orange-600 hover:bg-orange-700" : ""}
+                            >
+                                {enabledNoIndex ? t('admin.settings.noIndex.enabled') : t('admin.settings.noIndex.disabled')}
+                            </Button>
                         </div>
                     </div>
 

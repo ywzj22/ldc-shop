@@ -189,6 +189,11 @@
                 "saveReward": "Save Points",
                 "enabled": "Enabled",
                 "disabled": "Disabled"
+            },
+            "noIndex": {
+                "title": "No Index",
+                "enabled": "Blocked",
+                "disabled": "Allowed"
             }
         },
         "export": {

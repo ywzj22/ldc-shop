@@ -189,6 +189,11 @@
                 "saveReward": "保存积分",
                 "enabled": "已启用",
                 "disabled": "已禁用"
+            },
+            "noIndex": {
+                "title": "禁止收录",
+                "enabled": "已禁止",
+                "disabled": "允许收录"
             }
         },
         "export": {

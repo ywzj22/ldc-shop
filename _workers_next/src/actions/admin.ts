@@ -236,6 +236,13 @@ export async function saveCheckinEnabled(enabled: boolean) {
     revalidatePath('/')
 }
 
+export async function saveNoIndex(enabled: boolean) {
+    await checkAdmin()
+    await setSetting('noindex_enabled', enabled ? 'true' : 'false')
+    revalidatePath('/admin')
+    revalidatePath('/')
+}
+
 async function ensureCategoriesTable() {
     await db.run(sql`
         CREATE TABLE IF NOT EXISTS categories (

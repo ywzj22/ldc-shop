@@ -14,14 +14,21 @@ const DEFAULT_DESCRIPTION = "High-quality virtual goods, instant delivery";
 
 export async function generateMetadata(): Promise<Metadata> {
   let shopName: string | null = null;
+  let noIndex = false;
   try {
-    shopName = await getSetting("shop_name");
+    const [name, noIndexSetting] = await Promise.all([
+      getSetting("shop_name"),
+      getSetting("noindex_enabled")
+    ]);
+    shopName = name;
+    noIndex = noIndexSetting === 'true';
   } catch {
     shopName = null;
   }
   return {
     title: shopName?.trim() || DEFAULT_TITLE,
     description: DEFAULT_DESCRIPTION,
+    robots: noIndex ? { index: false, follow: false } : undefined,
   };
 }
 
